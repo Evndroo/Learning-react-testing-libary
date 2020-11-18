@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from "@testing-library/react"
-import App from "./App"
+import App, { calcularNovoSaldo } from "./App"
 
 
 describe("Componente principal", () =>{
     describe("Quando eu abro o app do banco...", () =>{
-        it("o nome do bamco deve ser exibido", ()=>{
+        it("o nome do banco deve ser exibido", ()=>{
             render(<App/>)
             expect(screen.getByText("ByteBank")).toBeInTheDocument();
         })
@@ -20,5 +20,27 @@ describe("Componente principal", () =>{
             expect(screen.getByText("Realizar operação")).toBeInTheDocument();
         })
     })
-    
+    describe("Quando realizo uma transalção", ()=>{
+        it("de saque, o saldo deve diminuir", ()=>{
+            const valores = {
+                transacao: "saque",
+                valor: 100
+            };
+
+            const novoSaldo = calcularNovoSaldo(valores,200);
+            
+            expect(novoSaldo).toBe(100)
+        })
+        
+        it("de depósito", ()=>{
+            const valores = {
+                transacao: "deposito",
+                valor: 100
+            };
+
+            const novoSaldo = calcularNovoSaldo(valores,200);
+            
+            expect(novoSaldo).toBe(300)
+        });
+    })
 });
