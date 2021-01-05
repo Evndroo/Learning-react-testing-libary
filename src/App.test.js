@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from "@testing-library/react"
 import App, { calcularNovoSaldo } from "./App"
-import { act } from 'react-dom/test-utils';
 
 
 describe("Componente principal", () => {
@@ -21,7 +20,7 @@ describe("Componente principal", () => {
             expect(screen.getByText("Realizar operação")).toBeInTheDocument();
         })
     })
-    describe("Quando realizo uma transação", () => {
+    describe("Quando realizo uma transalção", () => {
         it("de saque, o saldo deve diminuir", () => {
             const valores = {
                 transacao: "saque",
@@ -34,26 +33,23 @@ describe("Componente principal", () => {
         });
 
         it("de saque, a transação deve ser realizada", () => {
-            act(() => {
-                const { getByText, getByTestId, getByLabelText } = render(<App />)
+            render(<App />)
+
+            const saldo = screen.getByText("R$ 1000");
+            const transacao = screen.getByLabelText("Saque", { selector: "input" });
+            const valor = screen.getByTestId("valor");
+            const botaoTransacao = screen.getByText("Realizar operação");
 
 
-                const saldo = getByText("R$ 1000");
-                const transacao = getByLabelText("Saque");
-                const valor = getByTestId("valor");
-                const botaoTransacao = getByText("Realizar operação");
+            expect(saldo.textContent).toBe("R$ 1000");
 
 
-                expect(saldo.textContent).toBe("R$ 1000");
-                fireEvent.click(transacao, { target: { value: "saque" } });
-
-                fireEvent.change(valor, { target: { value: "10" } });
-
-                fireEvent.click(botaoTransacao);
-
-                expect(saldo.textContent).toBe("R$ 990");
-
-            });
+            
+            fireEvent.click(transacao, { target: { value: "saque" } });
+            fireEvent.change(valor, { target: { value: "10" } });
+            fireEvent.click(botaoTransacao);
+            expect(saldo.textContent).toBe("R$ 990");
+            
         });
 
 
@@ -64,7 +60,6 @@ describe("Componente principal", () => {
             };
 
             const novoSaldo = calcularNovoSaldo(valores, 200);
-
             expect(novoSaldo).toBe(300)
         });
     })
